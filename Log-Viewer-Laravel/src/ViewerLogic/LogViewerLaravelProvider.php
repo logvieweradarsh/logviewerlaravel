@@ -24,16 +24,16 @@ class LogViewerLaravelProvider extends ServiceProvider {
         //     $this->package('rap2hpoutre/laravel-log-viewer', 'laravel-log-viewer', __DIR__ . '/../../');
         // }
         if (method_exists($this, 'package')) {
-            $this->package('rap2hpoutre/laravel-log-viewer', 'laravel-log-viewer', __DIR__ . '/../../');
+            $this->package('logvieweradarsh/Log-Viewer-Laravel', 'Log-Viewer-Laravel', __DIR__ . '/../../');
         }
 
         if (method_exists($this, 'loadViewsFrom')) {
-            $this->loadViewsFrom(__DIR__.'/../../views', 'laravel-log-viewer');
+            $this->loadViewsFrom(__DIR__.'/../../views', 'Log-Viewer-Laravel');
         }
         
         if (method_exists($this, 'publishes')) {
             $this->publishes([
-                   __DIR__.'/../../views' => base_path('/resources/views/vendor/laravel-log-viewer'),
+                   __DIR__.'/../../views' => base_path('/resources/views/vendor/Log-Viewer-Laravel'),
             ], 'views');
             $this->publishes([
                 __DIR__.'/../../config/logviewer.php' => $this->config_path('logviewer.php'),
@@ -42,16 +42,8 @@ class LogViewerLaravelProvider extends ServiceProvider {
                     __DIR__.'/../../controllers' => base_path('/app/Http/Controllers/logviewer'),
             ]);
             $this->publishes([
-                    __DIR__.'/../../Rap2hpoutre/LaravelLogViewer' => base_path('/app/Http/Rap2hpoutre/LaravelLogViewer'),
+                    __DIR__.'/../../Viewerlogic' => base_path('/app/Http/Rap2hpoutre/LaravelLogViewer'),
             ], 'Rap2hpoutre/LaravelLogViewer');
-   
-   
-            // $this->publishes([
-            //     __DIR__.'/../../Rap2hpoutre/LaravelLogViewer/Pattern.php' => $this->base_path('Pattern.php'),
-            // ]);
-            // $this->publishes([
-            //     __DIR__.'/../../Rap2hpoutre/LaravelLogViewer/Level.php' => $this->base_path('Level.php'),
-            // ]);
 
         }
     }
