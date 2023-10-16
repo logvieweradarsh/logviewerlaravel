@@ -16,3 +16,22 @@ Route::get('logs/logs_view', [\LogViewerLaravel\LogViewerController::class, 'vie
 ```
 
 Go to `http://yourwebsitename/logs` or some other route
+
+## Advanced usage
+### Customize view
+
+Publish `log.blade.php` into `/resources/views/vendor/laravel-log-viewer/` for view customization:
+
+```bash
+php artisan vendor:publish \
+  --provider="ViewerLogic\LogViewerLaravelProvider" \
+  --tag=views
+``` 
+
+### Edit configuration
+Publish `logviewer.php` configuration file into `/config/` for configuration customization:
+
+```bash
+php artisan vendor:publish \
+  --provider="ViewerLogic\LogViewerLaravelProvider"
+``` 
