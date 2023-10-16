@@ -85,7 +85,7 @@
         <?php 
           for($i=1; $i<2; $i++){  
           ?>
-          {{-- @foreach($folders as $folder) --}}
+        
             <div class="list-group-item">
               <?php
               \ViewerLogic\ViewerLogic::DirectoryTreeStructure( $storage_path, $structure );
@@ -94,8 +94,9 @@
             </div>
           <?php
           }
+          
           ?>
-            {{-- @endforeach --}}
+          
             @if($folders < 1)
             @foreach($files as $file)
               <a href="logs_view?l={{ \Illuminate\Support\Facades\Crypt::encrypt($file) }}"

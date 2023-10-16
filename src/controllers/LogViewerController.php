@@ -3,8 +3,7 @@
 namespace LogViewerLaravel;
 
 use ViewerLogic\ViewerLogic;
-use Illuminate\Http\Request;
-// use GuzzleHttp\Psr7\Request;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Crypt;
 
 if (class_exists("\\Illuminate\\Routing\\Controller")) {	
@@ -76,9 +75,6 @@ class LogViewerController extends BaseController
 
         ];
 
-        $mod_time = $this->getModifyTime($data['structure']); 
-        $data['mod_time'] = $mod_time;
-
         if ($this->request->wantsJson()) {
             return $data;
         }
@@ -93,20 +89,6 @@ class LogViewerController extends BaseController
         }
 
         return app('view')->make($this->view_log, $data);
-    }
-
-
-
-    public function getModifyTime($data){
-        
-        foreach($data as $key => $val){
-            if(is_array($val)){ 
-                $this->getModifyTime($val);
-            }else{
-                $this->modifyTime[$val] = date("Y-m-d H:i:s", filemtime($val));
-            }
-        }
-        return $this->modifyTime;
     }
 
 

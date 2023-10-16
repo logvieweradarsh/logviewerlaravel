@@ -83,7 +83,6 @@
               <p class="mb-0">{{$current_file}} </p>
           </div>
           <div class="actions d-flex align-items-center">
-              {{-- <a class="add-btn" href="{{ route('sync.all') }}">Sync All</a>&nbsp;&nbsp; --}}
               <a href="{{ route('log.viewer') }}" class="back-btn"> Back</a>
           </div>
       </div>
