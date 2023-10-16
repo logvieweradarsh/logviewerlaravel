@@ -3,7 +3,8 @@
 namespace LogViewerLaravel;
 
 use ViewerLogic\ViewerLogic;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
+// use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Crypt;
 
 if (class_exists("\\Illuminate\\Routing\\Controller")) {	
