@@ -32,8 +32,8 @@ class LogViewerController extends BaseController
     /**
      * @var string
      */
-    protected $view_log = 'Log-Viewer-Laravel::log';
-    protected $view_log_view = 'Log-Viewer-Laravel::log_view';
+    protected $view_log = 'log-viewer-laravel::log';
+    protected $view_log_view = 'log-viewer-laravel::log_view';
 
     /**
      * LogViewerController constructor.
