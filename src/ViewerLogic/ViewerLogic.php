@@ -143,6 +143,8 @@ class ViewerLogic
      */
     public function all()
     {
+        try{
+            
         $log = array();
 
         if (!$this->file) {
@@ -228,7 +230,10 @@ class ViewerLogic
             }
         }
 
-        return array_reverse($log);
+            return array_reverse($log);
+        }catch(\Exception $e) {
+            return $e;
+        }
     }
 
     /**Creates a multidimensional array
@@ -240,19 +245,23 @@ class ViewerLogic
      */
     public function foldersAndFiles($path = null)
     {
-        $contents = array();
-        $dir = $path ? $path : $this->storage_path;
-        foreach (scandir($dir) as $node) {
-            if ($node == '.' || $node == '..' || $node == '.gitignore') continue;
-            $path = $dir . '/' . $node;
-            if (is_dir($path)) {
-                $contents[$path] = $this->foldersAndFiles($path);
-            } else {
-                $contents[] = $path;
+        try{
+            $contents = array();
+            $dir = $path ? $path : $this->storage_path;
+            foreach (scandir($dir) as $node) {
+                if ($node == '.' || $node == '..' || $node == '.gitignore') continue;
+                $path = $dir . '/' . $node;
+                if (is_dir($path)) {
+                    $contents[$path] = $this->foldersAndFiles($path);
+                } else {
+                    $contents[] = $path;
+                }
             }
-        }
 
-        return $contents;
+            return $contents;
+        }catch(\Exception $e) {
+            return $e;
+        }
     }
 
     /**Returns an array of
@@ -264,8 +273,10 @@ class ViewerLogic
      */
     public function getFolders($folder = '')
     {
-        $folders = [];
-        $listObject = new \RecursiveIteratorIterator(
+        try{
+
+            $folders = [];
+            $listObject = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($this->storage_path . '/' . $folder, \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::CHILD_FIRST
         );
@@ -273,6 +284,9 @@ class ViewerLogic
             if ($fileinfo->isDir()) $folders[] = $fileinfo->getRealPath();
         }
         return $folders;
+        }catch(\Exception $e) {
+            return $e;
+        }
     }
 
 
@@ -292,23 +306,27 @@ class ViewerLogic
      */
     public function getFiles($basename = false, $folder = '')
     {
-        $files = [];
-        $pattern = function_exists('config') ? config('logviewer.pattern', '*.log') : '*.log';
-        $fullPath = $this->storage_path . '/' . $folder;
+        try{
+            $files = [];
+            $pattern = function_exists('config') ? config('logviewer.pattern', '*.log') : '*.log';
+            $fullPath = $this->storage_path . '/' . $folder;
 
-        $listObject = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($fullPath, \RecursiveDirectoryIterator::SKIP_DOTS),
-            \RecursiveIteratorIterator::CHILD_FIRST
-        );
+            $listObject = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($fullPath, \RecursiveDirectoryIterator::SKIP_DOTS),
+                \RecursiveIteratorIterator::CHILD_FIRST
+            );
 
-        foreach ($listObject as $fileinfo) {
-            if (!$fileinfo->isDir() && strtolower(pathinfo($fileinfo->getRealPath(), PATHINFO_EXTENSION)) == explode('.', $pattern)[1])
-                $files[] = $basename ? basename($fileinfo->getRealPath()) : $fileinfo->getRealPath();
+            foreach ($listObject as $fileinfo) {
+                if (!$fileinfo->isDir() && strtolower(pathinfo($fileinfo->getRealPath(), PATHINFO_EXTENSION)) == explode('.', $pattern)[1])
+                    $files[] = $basename ? basename($fileinfo->getRealPath()) : $fileinfo->getRealPath();
+            }
+
+            arsort($files);
+
+            return array_values($files);
+        }catch(\Exception $e) {
+            return $e;
         }
-
-        arsort($files);
-
-        return array_values($files);
     }
 
     /**
@@ -329,12 +347,17 @@ class ViewerLogic
         $this->storage_path = $path;
     }
 
+   public static function get_mb($size) {
+        return sprintf(" %4.2f MB", $size/1048576);
+    }
+
 
     public static function directoryTreeStructure($storage_path, array $array)
     {
 
         foreach ($array as $k => $v) {
             if (is_dir($k)) {
+                
 
                 $exploded = explode("\\", $k);
                 $show = last($exploded);
@@ -355,12 +378,23 @@ class ViewerLogic
                 $show2 = last($exploded);
                 $folder = str_replace($storage_path, "", rtrim(str_replace($show2, "", $v), "\\"));
                 $file = $v;
+                $fileSizeInMB = self::get_mb(filesize($file));
 
                 if($show2 !== ".gitignore"){
-                    echo '<div class="list-group-item">
+                    echo '<div class="list-group-item d-flex align-items-center justify-content-between">
 				    <a href="logs/logs_view?l='.\Illuminate\Support\Facades\Crypt::encrypt($file).'">
                     <span class="fa fa-file"></span> '.basename($show2).'
 				    </a>
+                    <div class="ada">
+                    <span style="color:red" class="mr-3">  '.date("Y-m-d H:i:s", filemtime($file)).' </span>
+                    <span class="mr-2 font-weight-bold">  '. $fileSizeInMB .'  </span>
+                    <a href="?dl='.\Illuminate\Support\Facades\Crypt::encrypt($file).'">
+                        <span class="fa fa-download mr-2"> </span>
+                    </a>
+                    <a class="delete-log" href="?del='.\Illuminate\Support\Facades\Crypt::encrypt($file).'" data-val="Delete File">
+                    <i class="fa fa-trash mr-2"> </i> 
+                    </a>
+                    </div>
                     </div>';
                 }else{
                 }

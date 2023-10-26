@@ -50,92 +50,104 @@ class LogViewerController extends BaseController
      */
     public function index()
     {
-        $folderFiles = [];
-        if ($this->request->input('f')) {
+        try{
+
+            $folderFiles = [];
+            if ($this->request->input('f')) {
             $this->log_viewer->setFolder(Crypt::decrypt($this->request->input('f')));
             $folderFiles = $this->log_viewer->getFolderFiles(true);
-        }
-        if ($this->request->input('l')) {
-            $this->log_viewer->setFile(Crypt::decrypt($this->request->input('l')));
-        }
-
-        if ($early_return = $this->earlyReturn()) {
-            return $early_return;
-        }
-
-        $data = [
-            'logs' => $this->log_viewer->all(),
-            'folders' => $this->log_viewer->getFolders(),
-            'current_folder' => $this->log_viewer->getFolderName(),
-            'folder_files' => $folderFiles,
-            'files' => $this->log_viewer->getFiles(true),
-            'current_file' => $this->log_viewer->getFileName(),
-            'standardFormat' => true,
-            'structure' => $this->log_viewer->foldersAndFiles(),
-            'storage_path' => $this->log_viewer->getStoragePath(),
-
-        ];
-
-        if ($this->request->wantsJson()) {
-            return $data;
-        }
-
-        if (is_array($data['logs']) && count($data['logs']) > 0) {
-            $firstLog = reset($data['logs']);
-            if ($firstLog) {
-                if (!$firstLog['context'] && !$firstLog['level']) {
-                    $data['standardFormat'] = false;
-                }
             }
+            if ($this->request->input('l')) {
+                $this->log_viewer->setFile(Crypt::decrypt($this->request->input('l')));
+            }
+
+            if ($early_return = $this->earlyReturn()) {
+                return $early_return;
+            }
+
+            $data = [
+                'logs' => '',
+                'folders' => $this->log_viewer->getFolders(),
+                'current_folder' => $this->log_viewer->getFolderName(),
+                'folder_files' => $folderFiles,
+                'files' => $this->log_viewer->getFiles(true),
+                'current_file' => $this->log_viewer->getFileName(),
+                'standardFormat' => true,
+                'structure' => $this->log_viewer->foldersAndFiles(),
+                'storage_path' => $this->log_viewer->getStoragePath(),
+
+            ];
+            
+            if ($this->request->wantsJson()) {
+                return $data;
+            }
+            
+            // if (is_array($data['logs']) && count($data['logs']) > 0) {
+            //     $firstLog = reset($data['logs']);
+            //     if ($firstLog) {
+            //         if (!$firstLog['context'] && !$firstLog['level']) {
+            //             $data['standardFormat'] = false;
+            //         }
+            //     }
+            // }
+            
+            return app('view')->make($this->view_log, $data);
+        }catch(\Exception $e) {
+            return $e;
         }
-
-        return app('view')->make($this->view_log, $data);
     }
-
 
     public function view(Request $request)
     {
-        $time_id = Crypt::decrypt($request->l);
-        $folderFiles = [];
-        if ($this->request->input('f')) {
-            $this->log_viewer->setFolder(Crypt::decrypt($this->request->input('f')));
-            $folderFiles = $this->log_viewer->getFolderFiles(true);
-        }
-        if ($this->request->input('l')) {
-            $this->log_viewer->setFile(Crypt::decrypt($this->request->input('l')));
-        }
-
-        if ($early_return = $this->earlyReturn()) {
-            return $early_return;
-        }
-
-        $data = [
-            'logs' => $this->log_viewer->all(),
-            'folders' => $this->log_viewer->getFolders(),
-            'current_folder' => $time_id,
-            'folder_files' => $folderFiles,
-            'files' => $this->log_viewer->getFiles(true),
-            'current_file' => $this->log_viewer->getFileName(),
-            'standardFormat' => true,
-            'structure' => $this->log_viewer->foldersAndFiles(),
-            'storage_path' => $this->log_viewer->getStoragePath(),
-            
-        ];
+        try{
         
-        if ($this->request->wantsJson()) {
-            return $data;
-        }
-
-        if (is_array($data['logs']) && count($data['logs']) > 0) {
-            $firstLog = reset($data['logs']);
-            if ($firstLog) {
-                if (!$firstLog['context'] && !$firstLog['level']) {
-                    $data['standardFormat'] = false;
-                }
+            $folderFiles = [];
+            if ($this->request->input('f')) {
+                $this->log_viewer->setFolder(Crypt::decrypt($this->request->input('f')));
+                $folderFiles = $this->log_viewer->getFolderFiles(true);
             }
-        }
+            if ($this->request->input('l')) {
+                $this->log_viewer->setFile(Crypt::decrypt($this->request->input('l')));
+            }
 
-        return app('view')->make($this->view_log_view, $data);
+            if ($early_return = $this->earlyReturn()) {
+                return $early_return;
+            }
+            
+            try{
+
+                $data = [
+                    'logs' => $this->log_viewer->all(),
+                    'folders' => $this->log_viewer->getFolders(),
+                    'current_folder' => '',
+                    'folder_files' => $folderFiles,
+                    'files' => $this->log_viewer->getFiles(true),
+                    'current_file' => $this->log_viewer->getFileName(),
+                    'standardFormat' => true,
+                    'structure' => $this->log_viewer->foldersAndFiles(),
+                    'storage_path' => $this->log_viewer->getStoragePath(),       
+                ];
+            }catch(\Exception $e) {
+                return $e;
+            }
+
+            // if ($this->request->wantsJson()) {
+            //     return $data;
+            // }
+
+                // if (is_array($data['logs']) && count($data['logs']) > 0) {
+                //     $firstLog = reset($data['logs']);
+                //     if ($firstLog) {
+                //         if (!$firstLog['context'] && !$firstLog['level']) {
+                //             $data['standardFormat'] = false;
+                //         }
+                //     }
+                // }
+
+            return app('view')->make($this->view_log_view, $data);
+        }catch(\Exception $e) {
+            dd($e);
+        }
     }
 
 
@@ -156,16 +168,17 @@ class LogViewerController extends BaseController
             return $this->redirect(url()->previous());
         } elseif ($this->request->has('del')) {
             app('files')->delete($this->pathFromInput('del'));
-            return $this->redirect($this->request->url());
-        } elseif ($this->request->has('delall')) {
-            $files = ($this->log_viewer->getFolderName())
-                        ? $this->log_viewer->getFolderFiles(true)
-                        : $this->log_viewer->getFiles(true);
-            foreach ($files as $file) {
-                app('files')->delete($this->log_viewer->pathToLogFile($file));
-            }
-            return $this->redirect($this->request->url());
-        }
+            return redirect()->route('log.viewer');
+        } 
+        // elseif ($this->request->has('delall')) {
+        //     $files = ($this->log_viewer->getFolderName())
+        //                 ? $this->log_viewer->getFolderFiles(true)
+        //                 : $this->log_viewer->getFiles(true);
+        //     foreach ($files as $file) {
+        //         app('files')->delete($this->log_viewer->pathToLogFile($file));
+        //     }
+        //     return $this->redirect($this->request->url());
+        // }
         return false;
     }
 

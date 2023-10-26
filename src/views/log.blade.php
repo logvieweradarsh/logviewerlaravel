@@ -68,8 +68,10 @@
       white-space: nowrap;
     }
     .list-group {
-            padding: 5px;
+      padding: 5px;
     }
+
+   
 
   </style>
 
@@ -125,26 +127,41 @@
 
   <script>
 
-  $(document).ready(function () {
-    $('.table-container tr').on('click', function () {
-      $('#' + $(this).data('display')).toggle();
+    $(document).ready(function () {
+      $('.table-container tr').on('click', function () {
+        $('#' + $(this).data('display')).toggle();
+      });
+      $('#table-log').DataTable({
+        "order": [$('#table-log').data('orderingIndex'), 'desc'],
+        "stateSave": true,
+        "stateSaveCallback": function (settings, data) {
+          window.localStorage.setItem("datatable", JSON.stringify(data));
+        },
+        "stateLoadCallback": function (settings) {
+          var data = JSON.parse(window.localStorage.getItem("datatable"));
+          if (data) data.start = 0;
+          return data;
+        }
+      });
     });
-    $('#table-log').DataTable({
-      "order": [$('#table-log').data('orderingIndex'), 'desc'],
-      "stateSave": true,
-      "stateSaveCallback": function (settings, data) {
-        window.localStorage.setItem("datatable", JSON.stringify(data));
-      },
-      "stateLoadCallback": function (settings) {
-        var data = JSON.parse(window.localStorage.getItem("datatable"));
-        if (data) data.start = 0;
-        return data;
-      }
-    });
-    $('#delete-log, #clean-log, #delete-all-log').click(function () {
-      return confirm('Are you sure?');
-    });
-  });
+
+      $('.delete-log').click(function () {
+        event.preventDefault();
+        var link = $(this);
+        console.log(link);
+            swal({
+            title: 'Are you sure?',
+            type: 'error',
+            text: 'You Want to ' + $(this).data('val') + '!',
+            showCancelButton: true,
+            cancelButtonText: 'No',
+            confirmButtonText: 'Yes'
+        }).then(function(result) {
+          window.location = link.attr('href');
+        }).catch(function(result) {
+              console.log(result);
+          });
+      });
 </script>
 </body>
 </html>

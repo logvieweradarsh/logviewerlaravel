@@ -151,11 +151,11 @@
                         <span class="fa fa-download"></span> Download file
                       </a>
                       -
-                      <a id="clean-log" href="?clean={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ ($current_folder) ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
+                      <a id="clean-log" href="?clean={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ ($current_folder) ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}" data-val="Clean File">
                         <span class="fa fa-sync"></span> Clean file
                       </a>
                       -
-                      <a id="delete-log" href="?del={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ ($current_folder) ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}">
+                      <a id="delete-log" href="?del={{ \Illuminate\Support\Facades\Crypt::encrypt($current_file) }}{{ ($current_folder) ? '&f=' . \Illuminate\Support\Facades\Crypt::encrypt($current_folder) : '' }}" data-val="Delete File">
                         <span class="fa fa-trash"></span> Delete file
                       </a>
                       {{-- @if(count($files) > 1)
@@ -203,10 +203,29 @@
           return data;
         }
       });
+
       $('#delete-log, #clean-log, #delete-all-log').click(function () {
-        return confirm('Are you sure?');
+
+          event.preventDefault();
+          var link = $(this);
+
+          console.log(link);
+              swal({
+              title: 'Are you sure?',
+              type: 'error',
+              text: 'You Want to ' + $(this).data('val') + '!',
+              showCancelButton: true,
+              cancelButtonText: 'No',
+              confirmButtonText: 'Yes'
+          }).then(function(result) {
+            window.location = link.attr('href');
+
+
+          }).catch(function(result) {
+                console.log(result);
+            });
+          });
       });
-    });
   </script>
  </body>
 </html>
