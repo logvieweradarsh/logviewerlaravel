@@ -9,6 +9,7 @@
         href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
         crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
 
   <style>
@@ -119,6 +120,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.32/sweetalert2.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <!-- FontAwesome -->
   <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
 <!-- Datatables -->
@@ -127,40 +129,42 @@
 
   <script>
 
-    $(document).ready(function () {
-      $('.table-container tr').on('click', function () {
-        $('#' + $(this).data('display')).toggle();
+      $(document).ready(function () {
+        $('.table-container tr').on('click', function () {
+          $('#' + $(this).data('display')).toggle();
+        });
+        $('#table-log').DataTable({
+          "order": [$('#table-log').data('orderingIndex'), 'desc'],
+          "stateSave": true,
+          "stateSaveCallback": function (settings, data) {
+            window.localStorage.setItem("datatable", JSON.stringify(data));
+          },
+          "stateLoadCallback": function (settings) {
+            var data = JSON.parse(window.localStorage.getItem("datatable"));
+            if (data) data.start = 0;
+            return data;
+          }
+        });
       });
-      $('#table-log').DataTable({
-        "order": [$('#table-log').data('orderingIndex'), 'desc'],
-        "stateSave": true,
-        "stateSaveCallback": function (settings, data) {
-          window.localStorage.setItem("datatable", JSON.stringify(data));
-        },
-        "stateLoadCallback": function (settings) {
-          var data = JSON.parse(window.localStorage.getItem("datatable"));
-          if (data) data.start = 0;
-          return data;
-        }
-      });
-    });
 
       $('.delete-log').click(function () {
+
         event.preventDefault();
         var link = $(this);
-        console.log(link);
-            swal({
-            title: 'Are you sure?',
-            type: 'error',
-            text: 'You Want to ' + $(this).data('val') + '!',
-            showCancelButton: true,
-            cancelButtonText: 'No',
-            confirmButtonText: 'Yes'
-        }).then(function(result) {
-          window.location = link.attr('href');
-        }).catch(function(result) {
-              console.log(result);
-          });
+        new swal({
+              title: 'Are you sure?',
+              type: 'error',
+              text: 'You Want to ' + $(this).data('val') + '!',
+              showCancelButton: true,
+              cancelButtonText: 'No',
+              confirmButtonText: 'Yes'
+          }).then(function(result) {
+            if(result.isConfirmed){
+              window.location = link.attr('href');
+            }
+          }).catch(function(result) {
+                console.log(result);
+            });
       });
 </script>
 </body>
