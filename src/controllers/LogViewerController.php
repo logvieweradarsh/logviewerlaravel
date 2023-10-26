@@ -81,16 +81,7 @@ class LogViewerController extends BaseController
             if ($this->request->wantsJson()) {
                 return $data;
             }
-            
-            // if (is_array($data['logs']) && count($data['logs']) > 0) {
-            //     $firstLog = reset($data['logs']);
-            //     if ($firstLog) {
-            //         if (!$firstLog['context'] && !$firstLog['level']) {
-            //             $data['standardFormat'] = false;
-            //         }
-            //     }
-            // }
-            
+
             return app('view')->make($this->view_log, $data);
         }catch(\Exception $e) {
             return $e;
@@ -100,7 +91,8 @@ class LogViewerController extends BaseController
     public function view(Request $request)
     {
         try{
-        
+
+            $path = $request->l;
             $folderFiles = [];
             if ($this->request->input('f')) {
                 $this->log_viewer->setFolder(Crypt::decrypt($this->request->input('f')));
@@ -115,34 +107,24 @@ class LogViewerController extends BaseController
             }
             
             try{
-
+                
                 $data = [
                     'logs' => $this->log_viewer->all(),
                     'folders' => $this->log_viewer->getFolders(),
                     'current_folder' => '',
                     'folder_files' => $folderFiles,
                     'files' => $this->log_viewer->getFiles(true),
+                    'path' => $path,
                     'current_file' => $this->log_viewer->getFileName(),
                     'standardFormat' => true,
                     'structure' => $this->log_viewer->foldersAndFiles(),
                     'storage_path' => $this->log_viewer->getStoragePath(),       
                 ];
+
+                // dd($data);
             }catch(\Exception $e) {
                 return $e;
             }
-
-            // if ($this->request->wantsJson()) {
-            //     return $data;
-            // }
-
-                // if (is_array($data['logs']) && count($data['logs']) > 0) {
-                //     $firstLog = reset($data['logs']);
-                //     if ($firstLog) {
-                //         if (!$firstLog['context'] && !$firstLog['level']) {
-                //             $data['standardFormat'] = false;
-                //         }
-                //     }
-                // }
 
             return app('view')->make($this->view_log_view, $data);
         }catch(\Exception $e) {
