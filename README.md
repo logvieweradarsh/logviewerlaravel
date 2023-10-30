@@ -1,5 +1,5 @@
 # logviewerlaravel
-
+[![Total Downloads](https://img.shields.io/packagist/dt/logviewerlaravel/log-viewer-laravel.svg?style=flat-square)](https://packagist.org/packages/logviewerlaravel/log-viewer-laravel)
 ## TL;DR
 Log Viewer for Laravel 5, 6, 7, 8 & 9. **Install with composer**.
 
