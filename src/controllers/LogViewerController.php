@@ -1,12 +1,13 @@
 <?php
 
-// namespace LogViewerLaravel;  //// Comment After Publish
+namespace LogViewerLaravel;  //// Comment After Publish
 
-namespace App\Http\Controllers\logviewer; //// Uncomment After Publish
+// namespace App\Http\Controllers\LogViewerLaravel; //// Uncomment After Publish
 
-// use ViewerLogic\ViewerLogic;   //// Comment After Publish
+use ViewerLogic\ViewerLogic;   //// Comment After Publish
 
-use \App\Http\ViewerLogic\ViewerLogic; //// Uncomment After Publish
+// use \App\Http\ViewerLogic\ViewerLogic; //// Uncomment After Publish
+
 use Illuminate\Http\Request;
 // use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\Crypt;

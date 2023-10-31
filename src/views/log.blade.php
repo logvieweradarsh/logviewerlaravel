@@ -91,7 +91,8 @@
         
             <div class="list-group-item">
               <?php
-              \App\Http\ViewerLogic\ViewerLogic::DirectoryTreeStructure( $storage_path, $structure );
+              ViewerLogic\ViewerLogic::DirectoryTreeStructure( $storage_path, $structure );
+              // \App\Http\ViewerLogic\ViewerLogic::DirectoryTreeStructure( $storage_path, $structure );
               ?>
 
             </div>
