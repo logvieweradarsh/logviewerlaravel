@@ -1,6 +1,8 @@
 <?php 
 
-namespace ViewerLogic;
+// namespace ViewerLogic;  //// Comment After Publish
+
+namespace App\Http\ViewerLogic;  //// Uncomment After Publish
 
 /**
  * Class Pattern
