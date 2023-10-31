@@ -6,7 +6,7 @@ namespace LogViewerLaravel;  //// Comment After Publish
 
 use ViewerLogic\ViewerLogic;   //// Comment After Publish
 
-// use \App\Http\ViewerLogic\ViewerLogic; //// Uncomment After Publish
+// use App\Http\ViewerLogic\ViewerLogic; //// Uncomment After Publish
 
 use Illuminate\Http\Request;
 // use GuzzleHttp\Psr7\Request;
@@ -48,6 +48,10 @@ class LogViewerController extends BaseController
 
     // protected $view_log = 'log-viewer-laravel.log';
     // protected $view_log_view = 'log-viewer-laravel.log_view';
+
+
+    // protected $view_log = 'log-viewer-laravel.log' ? 'log-viewer-laravel.log' : 'log-viewer-laravel::log';
+    // protected $view_log_view = 'log-viewer-laravel.log_view' ? 'log-viewer-laravel.log_view' : 'log-viewer-laravel::log_view';
 
     /**
      * LogViewerController constructor.
