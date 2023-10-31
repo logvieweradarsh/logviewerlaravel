@@ -30,20 +30,111 @@ class ViewerLogic
     /**
      * @var Level level
      */
-    private $level;
+    
+    // private $level;
+  
+    /**
+     * @var array
+     */
+
+    private $levels_classes = [
+        'debug' => 'info',
+        'info' => 'info',
+        'notice' => 'info',
+        'warning' => 'warning',
+        'error' => 'danger',
+        'critical' => 'danger',
+        'alert' => 'danger',
+        'emergency' => 'danger',
+        'processed' => 'info',
+        'failed' => 'warning',
+    ];
+
+    /**
+     * @var array
+     */
+
+    private $levels_imgs = [
+        'debug' => 'info-circle',
+        'info' => 'info-circle',
+        'notice' => 'info-circle',
+        'warning' => 'exclamation-triangle',
+        'error' => 'exclamation-triangle',
+        'critical' => 'exclamation-triangle',
+        'alert' => 'exclamation-triangle',
+        'emergency' => 'exclamation-triangle',
+        'processed' => 'info-circle',
+        'failed' => 'exclamation-triangle'
+    ];
+
+    /**
+     * @return array
+     */
+
+    public function levelAll()
+    {
+        return array_keys($this->levels_imgs);
+    }
+
+    /**
+     * @param $level
+     * @return string
+     */
+
+    public function img($level)
+    {
+        return $this->levels_imgs[$level];
+    }
+
+    /**
+     * @param $level
+     * @return string
+     */
+
+    public function cssClass($level)
+    {
+        return $this->levels_classes[$level];
+    }
+
 
     /**
      * @var Pattern pattern
      */
-    private $pattern;
+    // private $pattern;
+    
+    /**
+     * @var array
+     */
 
+    private $patterns = [
+        'logs' => '/\[\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}([\+-]\d{4})?\].*/',
+        'current_log' => [
+            '/^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}([\+-]\d{4})?)\](?:.*?(\w+)\.|.*?)',
+            ': (.*?)( in .*?:[0-9]+)?$/i'
+        ],
+        'files' => '/\{.*?\,.*?\}/i',
+    ];
+
+
+    public function patternAll()
+    {
+        return array_keys($this->patterns);
+    }
+
+    public function getPattern($pattern, $position = null)
+    {
+        if ($position !== null) {
+            return $this->patterns[$pattern][$position];
+        }
+        return $this->patterns[$pattern];
+        
+    }
     /**
      * LogViewerLaravel constructor.
-     */
+     */ 
+
     public function __construct()
     {
-        $this->level = new Level();
-        $this->pattern = new Pattern();
         $this->storage_path = function_exists('config') ? config('logviewer.storage_path', storage_path('logs')) : storage_path('logs');
 
     }
@@ -51,6 +142,7 @@ class ViewerLogic
     /**
      * @param string $folder
      */
+
     public function setFolder($folder)
     {
         if (app('files')->exists($folder)) {
@@ -81,6 +173,7 @@ class ViewerLogic
      * @param string $file
      * @throws \Exception
      */
+
     public function setFile($file)
     {
         $file = $this->pathToLogFile($file);
@@ -95,6 +188,7 @@ class ViewerLogic
      * @return string
      * @throws \Exception
      */
+
     public function pathToLogFile($file)
     {
 
@@ -174,13 +268,13 @@ class ViewerLogic
 
         $file = app('files')->get($this->file);
 
-        preg_match_all($this->pattern->getPattern('logs'), $file, $headings);
+        preg_match_all($this->getPattern('logs'), $file, $headings);
 
         if (!is_array($headings)) {
             return $log;
         }
 
-        $log_data = preg_split($this->pattern->getPattern('logs'), $file);
+        $log_data = preg_split($this->getPattern('logs'), $file);
 
         if ($log_data[0] < 1) {
             array_shift($log_data);
@@ -188,10 +282,10 @@ class ViewerLogic
 
         foreach ($headings as $h) {
             for ($i = 0, $j = count($h); $i < $j; $i++) {
-                foreach ($this->level->all() as $level) {
+                foreach ($this->levelAll() as $level) {
                     if (strpos(strtolower($h[$i]), '.' . $level) || strpos(strtolower($h[$i]), $level . ':')) {
 
-                        preg_match($this->pattern->getPattern('current_log', 0) . $level . $this->pattern->getPattern('current_log', 1), $h[$i], $current);
+                        preg_match($this->getPattern('current_log', 0) . $level . $this->getPattern('current_log', 1), $h[$i], $current);
                         if (!isset($current[4])) {
                             continue;
                         }
@@ -200,8 +294,8 @@ class ViewerLogic
                             'context' => $current[3],
                             'level' => $level,
                             'folder' => $this->folder,
-                            'level_class' => $this->level->cssClass($level),
-                            'level_img' => $this->level->img($level),
+                            'level_class' => $this->cssClass($level),
+                            'level_img' => $this->img($level),
                             'date' => $current[1],
                             'text' => $current[4],
                             'in_file' => isset($current[5]) ? $current[5] : null,
